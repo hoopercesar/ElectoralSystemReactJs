@@ -44,10 +44,34 @@ const Formulario = () => {
     opcionesSeleccionadas: []
   })
 
-  const handleSubmit = (event) => {
+  const actualizarDatos = (nombreCampo, valor) => {
+    setDatosFormulario(prevDatos => ({
+      ...prevDatos,
+      [nombreCampo]: valor,
+    }))
+  }
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    try {
+      const response = await fetch("url", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(datosFormulario),
+      });
+
+      if (response.ok) {
+        console.log('Datos del formulario enviados correctamente');
+      } else {
+        console.error('Error al enviar datos del formulario');
+      }
+    } catch (error) {
+      console.error('Error al procesar la solicitud', error);
+    }
     // Lógica para manejar los datos del formulario
-    console.log('Datos del formulario:', { nombre, correo, rut, region, comuna, candidato, comoNosConociste });
+    console.log('Datos del formulario:', datosFormulario);
   };
 
   return (
@@ -56,11 +80,11 @@ const Formulario = () => {
     <FormularioWrapper>
       <form onSubmit={handleSubmit} autoComplete="off">
 
-        <DatosPersonales/>
+        <DatosPersonales actualizarDatos={actualizarDatos}/>
 
-        <RegionesComunas/>  
+        <RegionesComunas actualizarDatos={actualizarDatos}/>  
 
-        <CheckBoxes/>        
+        <CheckBoxes actualizarDatos={actualizarDatos}/>        
 
         <Boton type="submit">Enviar</Boton>
       </form>
